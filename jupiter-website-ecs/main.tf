@@ -61,6 +61,7 @@ module "application_load_balancer" {
   certificate_arn       = module.acm.certificate_arn
 }
 
+#create elastic container service
 module "ecs" {
   source                      = "../modules/ecs"
   project_name                = module.vpc.project_name
@@ -72,4 +73,11 @@ module "ecs" {
   ecs_security_group_id       = module.security_group.ecs_security_group_id
   alb_target_group_arn        = module.application_load_balancer.alb_target_group_arn
 
+}
+
+#create auto scaling group
+module "auto_scaling_group" {
+  source           = "../modules/asg"
+  ecs_cluster_name = module.ecs.ecs_cluster_name
+  ecs_service_name = module.ecs.ecs_service_name
 }
